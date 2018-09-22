@@ -1,0 +1,1200 @@
+<%@ Master Language="VB" CodeFile="MasterPage.master.vb" Inherits="MasterPage" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajax" %>
+<!DOCTYPE html>
+<html lang="en">
+<head runat="server">
+<title>AMS-Panel</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script src="fncybxlib/jquery-1.11.1.min.js" type="text/javascript" ></script>
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+<link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+<link rel="stylesheet" href="css/fullcalendar.css" />
+<link rel="stylesheet" href="css/matrix-style.css" />
+<link rel="stylesheet" href="css/matrix-media.css" />
+<link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/jquery.gritter.css" />
+
+
+<style type="text/css">
+        body
+        {
+            font-family: Arial;
+            font-size: 12px;
+        }
+        .modalBackground
+        {
+            background-color: Black;
+            filter: alpha(opacity=60);
+            opacity: 0.6;
+        }
+        .modalPopup
+        {
+            background-color: #FFFFFF;
+            width: 300px;
+            border: 3px solid #0DA9D0;
+            border-radius: 12px;
+            padding: 0;
+        }
+        .modalPopup .header
+        {
+            background-color: #2FBDF1;
+            height: 30px;
+            color: White;
+            line-height: 30px;
+            text-align: center;
+            font-weight: bold;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+        }
+        .modalPopup .body
+        {
+            padding:10px;
+            min-height: 50px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .modalPopup .footer
+        {
+            padding: 6px;
+        }
+        .modalPopup .yes, .modalPopup .no
+        {
+            height: 23px;
+            color: White;
+            line-height: 23px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .modalPopup .yes
+        {
+            background-color: #2FBDF1;
+            border: 1px solid #0DA9D0;
+        }
+        .modalPopup .no
+        {
+            background-color: #9F9F9F;
+            border: 1px solid #5C5C5C;
+        }
+
+#content {
+    width: 90% !important;
+}
+
+/* Responsive media style */
+
+@media screen and (max-width:1280px) {
+	#content {
+    		width: 82.9% !important;
+	}
+	#content-header h1 {
+	    font-size: 20px !important;
+	    margin-left: 10px !important;
+	}
+}
+
+@media screen and (max-width:1024px) {
+	#content {
+    		width: 79% !important
+	}
+	#content-header{width: 79%;}
+	.row-fluid .span9 {
+    width: 69.468%;
+}
+}
+
+@media screen and (max-width:980px) {
+	
+#content {
+    width: 77.8% !important;
+}
+}
+
+@media screen and (max-width:800px) {
+	#content {
+    width: 94.6% !important;
+}
+
+}
+
+@media screen and (max-width:600px) {
+	#content {
+    width: 93% !important; margin-top: 162px;
+}
+#content-header {
+    width: 93% !important;
+}
+}
+</style>
+<script type="text/javascript">
+    function ShowPopup() {
+       
+     $(document).ready(function () {
+         $("#btnShowPopup").click();
+         Setgrid();
+    });
+}
+</script>
+<script type="text/javascript">
+    function RedirectToLogin() {
+        alert('Session Expired. You will be redirected to Login'); window.parent.location.href = 'logout.aspx';
+    }
+    function RedirectToLoginFromPopUp() {
+        alert('Session Expired. You will be redirected to Login'); window.parent.parent.parent.location.href = 'logout.aspx';
+    }
+</script>
+<style type="text/css">
+div.qsf-right-content .qsf-col-wrap {
+    padding-right: 0;
+}
+ 
+div.carTitle {
+    font-size: 15pt;
+    padding: 30px 0 5px 0;
+}
+ .RadGrid .rgFilterRow img, .RadGrid .rgFilterRow input {
+    width: 72px !important;
+}
+hr.lineSeparator {
+    color: #a9b5be;
+    background-color: #a9b5be;
+    height: 1px;
+    border: none;
+}
+.RadWindow .rwCorner .rwTopLeft,
+.RadWindow .rwTitlebar,
+.RadWindow .rwCorner .rwTopRight,
+.RadWindow .rwIcon,
+.RadWindow table .rwTopLeft,
+.RadWindow table .rwTopRight,
+.RadWindow table .rwFooterLeft,
+.RadWindow table .rwFooterRight,
+.RadWindow table .rwFooterCenter,
+.RadWindow table .rwBodyLeft,
+.RadWindow table .rwBodyRight,
+.RadWindow table .rwTitlebar,
+.RadWindow table .rwTopResize,
+.RadWindow table .rwStatusbar {
+    display: none;
+}
+ 
+div.RadGrid_WebBlue .rgFilterRow td {
+    padding-bottom: 4px;
+    padding-top: 8px;
+}
+ 
+.rbDecorated {
+    padding-right: 10px !important;
+}
+ 
+span.RadButton {
+    vertical-align: top;
+}
+ .RadMenu ul.rmGroup {
+  
+    left: -300px !important;
+ }
+ 
+/*Page Layout*/
+</style>
+<style type=”text/css”>
+    #pageloaddiv {
+    position: fixed;
+    left: -50px;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    padding:10px;
+    border-radius:10px;
+    background: url(‘Images/ajax-loader.gif’) no-repeat center center rgba(255, 255, 255, 0.4);
+    }
+    .container-fluid{padding-top:5px !important;}
+</style>
+<style type="text/css">
+.modal {
+    position: fixed;
+    top: 2%;
+    left: 5%;
+    right:5%;
+    z-index: 1050;
+    width: 90%;
+    height:600px;
+    margin-left: 0px;
+    background-color: #FFF;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    outline: 0px none;
+    box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.3);
+    background-clip: padding-box;
+}
+.modal-body{max-height: 570px !important; padding: 0px !important;
+overflow-y: hidden !important;}
+
+        #loading
+        {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #000;
+            opacity: 0.6;
+            filter: alpha(opacity=40);
+            z-index: 999;
+            overflow: hidden;
+        }
+        
+        
+        #loading #loadingimage
+        {
+            height: 20px;
+            left: 30%;
+            position: fixed;
+            top: 40%;
+            width: 610px;
+            z-index: 1000;
+        }
+        
+        *:first-child + html #loading
+        {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #000;
+            opacity: 0.6;
+            filter: alpha(opacity=40);
+            z-index: 999;
+            overflow: hidden;
+        }
+        
+        *:first-child + html #loading #loadingimage
+        {
+            position: fixed;
+            width: 600px;
+            height: 20px;
+            left: 32%;
+            top: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            z-index: 1000;
+        }
+</style>
+<script type="text/javascript">
+
+function ShowProgress() {
+    var loadingdiv = document.getElementById("loading");
+loadingdiv.style.visibility = 'visible';
+
+}
+
+function HideProgress() {
+    var loadingdiv = document.getElementById("loading");
+loadingdiv.style.visibility = 'hidden';
+}
+</script>
+<link href="css/notify_css.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+   /* THE NOTIFICAIONS WINDOW. THIS REMAINS HIDDEN WHEN THE PAGE LOADS. */
+    #notifications {
+        display:none;
+        width:350px;
+        position:absolute;
+        top:30px;
+        left:270px;
+        background:#fff;
+        border:solid 1px rgba(100, 100, 100, .20);
+        -webkit-box-shadow:0 3px 8px rgba(0, 0, 0, .20);
+        z-index: 0;
+    }
+    /* AN ARROW LIKE STRUCTURE JUST OVER THE NOTIFICATIONS WINDOW */
+    #notifications:before {         
+        content: '';
+        display:block;
+        width:0;
+        height:0;
+        color:#cbcbcc;
+        border:10px solid #cbcbcc;
+        border-color:transparent transparent #cbcbcc;
+        margin-top:-20px;
+        margin-left:310px;
+    }
+        
+    .not3 {
+        display:block;
+        color:#333; 
+        background:#FFF;
+        font-weight:bold;
+        font-size:13px;    
+        padding:8px;
+        margin:0;
+        border-bottom:solid 1px rgba(100, 100, 100, .30);
+    }
+    
+    #notifications h3 {
+    cursor: default;
+    font-size: 1.05em;
+    font-weight: normal;
+}
+#notifications h3, .notifications .show-all {
+    background: #f3f0f0;
+    color: #333;
+    margin: 0;
+    padding: 5px 10px 5px 10px;
+    width: 350px;
+}
+.tblNoti_Data
+    {
+  -webkit-transition: -webkit-transform 0.25s ease-out 0.1s;
+  -moz-transition: -moz-transform 0.25s ease-out 0.1s;
+  -o-transition: -o-transform 0.25s ease-out 0.1s;
+  transition: transform 0.25s ease-out 0.1s;
+  border-bottom: 1px solid #bdc3c7;
+  color: #7f8c8d;
+  cursor: default;
+  display: block;
+  padding: 4px 10px 4px 10px;
+  position: relative;
+  white-space: nowrap;
+  width: 350px;
+  font-size: 12px;
+  background-color: #edf2fa;
+    }
+    .tblNoti_Data:hover {background-image: linear-gradient(rgba(29, 33, 41, .04), rgba(29, 33, 41, .04));}
+    .seeAll
+    {
+       background: #f3f0f0;
+color: #333;
+margin: 0;
+padding: 5px 10px 5px 10px;
+width: 350px;
+
+        
+        }
+ul, ol {
+    padding: 0;
+    margin: 0 0 0px 0px;
+        margin-bottom: 0px;
+}
+.date {font-size: 10px; float: left;}
+.ico_blue {color: #0081cc; padding-top: 15px; margin-right: 10px;}
+.details {width: 100%;}
+.acc_link {font-size: 10px;
+float: right;
+font-weight: 600;
+color: #bd1920; text-decoration: underline; font-family: Arial;}
+.acc_link:hover {text-decoration: none; color: #a70e14;}
+.btn_comm {
+    background: #bd1920;
+    color: #fff;
+    font-size: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    padding: 3px 15px 3px 15px;
+    margin: 0px 0px 0px 0px;
+    border-radius: 3px;
+    font-weight: 600;
+    line-height: 20px;
+}
+.btn_comm:hover, .btn_comm:focus {
+    background: #a10d13;
+    color: #fff;
+    box-shadow: 0 2px 5px 0px #333;
+    text-decoration: underline;
+}
+</style>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        Getdata();
+        var myVar = setInterval(Getdata, 9000);
+
+    });
+
+
+    function Getdata() {
+
+        var Name = $('#HFSession').val();
+
+        $.ajax({
+            type: "POST",
+            url: "notification.asmx/FetchNotification2", // add web service Name and web service Method Name
+            data: "{'Eid':'" + Name + "'}",  //web Service method Parameter Name and ,user Input value which in Name Variable.
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var xmlDoc = $.parseXML(response.d);
+                var xml = $(xmlDoc);
+
+                var noti_xml = xml.find("notification");
+                // if ($(noti_xml).length < 0) { return; }     // exit function if no data
+
+                var count = noti_xml.find("TITLE").size();
+
+                // ANIMATEDLY DISPLAY THE NOTIFICATION COUNTER.
+                $('#noti_Counter')
+                .css({ opacity: 0 })
+                .fadeIn('slow')
+                .text(count)  // ADD DYNAMIC VALUE (YOU CAN EXTRACT DATA FROM DATABASE OR XML).
+                // .css({ top: '-10px' })
+                .animate({ top: '-2px', opacity: 1 }, 500);
+
+                var ndata = $("#noti_data");
+                var table = $("#noti_data ul").eq(0).clone(true);
+                //$("#noti_data ul").empty();
+                //$("#noti_data").empty();
+                if (count == 0) {
+                    $(ndata).hide();
+                    return;
+                }
+                else {
+                    $(ndata).show();
+                    $(ndata).empty();
+                }
+     
+                $(noti_xml).each(function () {
+                    $(".title", table).html($(this).find("TITLE").text());
+                    $(".date", table).html($(this).find("NOT_DATETIME").text());
+                    $("#actlink", table).attr("href", $(this).find("ACTION_LINK").text());
+                    $(".ack_noti", table).attr("data_id", $(this).find("ID").text());
+                    $("#actlink", table).attr("data_id", $(this).find("ID").text());
+
+                    $("#noti_data").append(table);
+                    table = $("#noti_data ul").eq(0).clone(true);
+                });
+
+
+                //old
+                //  $("#noti_Counter").html(response.d); //getting the Response from JSON
+                //  $("#noti_Counter").html(response.d); 
+
+            },
+            failure: function (msg) {
+                alert(msg);
+            }
+        });
+    }
+
+    function UpdateNoti() {
+    //not using
+        var Name = $('#HFSession').val();
+        var IP = $('#HFIP').val();
+        //if (Greadon == undefined) return;  
+        $.ajax({
+            type: "POST",
+            url: "notification.asmx/UpdateNotification", // add web service Name and web service Method Name
+            data: "{'Eid':'" + Name + "','IP':'" + IP + "'}",  //web Service method Parameter Name and ,user Input value which in Name Variable.
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var res = response.d;            
+            },
+            failure: function (msg) {
+                alert(msg);
+            }
+        });
+    }
+    function UpdateNoti_id(nid) {
+       
+        var Name = $('#HFSession').val();
+        var IP = $('#HFIP').val();
+        var id = nid;
+
+        //if (Greadon == undefined) return;  
+        $.ajax({
+            type: "POST",
+            url: "notification.asmx/UpdateNotification_id", // add web service Name and web service Method Name
+            data: "{'Eid':'" + Name + "','IP':'" + IP + "','id':'" + nid + "'}",  //web Service method Parameter Name and ,user Input value which in Name Variable.
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+             var res = response.d;
+                Getdata();                
+            },
+            failure: function (msg) {
+                alert(msg);
+            }
+        });
+    }
+    </script>
+
+<script type="text/javascript">
+    $(function () {
+        $('#actlink').click(function () {
+            UpdateNoti_id($(this).attr('data_id'));
+            location.replace($(this).attr('href'));
+        });
+    });
+
+
+    $(function () {
+        $('.ack_noti').click(function () {
+            UpdateNoti_id($(this).attr('data_id'));
+        });
+    });
+
+    $(document).ready(function () {
+
+        $('#noti_Button').click(function () {
+           // UpdateNoti();
+            // TOGGLE (SHOW OR HIDE) NOTIFICATION WINDOW.
+            $('#notifications').fadeToggle('fast', 'linear', function () {
+
+                if ($('#notifications').is(':hidden')) {
+                    //$('#noti_Button').css('background-color', '#2E467C');
+                }
+                // CHANGE BACKGROUND COLOR OF THE BUTTON.
+                //else $('#noti_Button').css('background-color', '#FFF');
+            });
+
+            $('#noti_Counter').fadeOut('slow');     // HIDE THE COUNTER.
+
+            return false;
+        });
+
+        // HIDE NOTIFICATIONS WHEN CLICKED ANYWHERE ON THE PAGE.
+        $(document).click(function () {
+            $('#notifications').hide();
+
+            // CHECK IF NOTIFICATION COUNTER IS HIDDEN.
+            if ($('#noti_Counter').is(':hidden')) {
+                // CHANGE BACKGROUND COLOR OF THE BUTTON.
+                // $('#noti_Button').css('background-color', '#ffffff');
+            }
+        });
+
+        $('#notifications').click(function () {
+            return false;       // DO NOTHING WHEN CONTAINER IS CLICKED.
+        });
+    });
+</script>
+
+
+<asp:ContentPlaceHolder ID="ContentPlaceHolder2" runat="server">
+</asp:ContentPlaceHolder>
+
+</head>
+<body onload="HideProgress();">
+<div id="loading">
+        <div id="loadingimage" style="color: White; font-size: 17px; line-height: 55px; font-family: verdana;
+            text-align: center;">
+            <img src="Images/loading1.gif" width="20px" height="20px" />
+        </div>
+    </div>
+<div id="header">
+  <h1><a href="index.aspx">Acumen Admin</a></h1>
+</div>
+
+<!--top-Header-menu-->
+<div id="user-nav" class="navbar navbar-inverse">
+  <ul class="nav">
+    <li class=""><a><i class="icon icon-hand-right"></i> <span class="text"><asp:Label ID="masterpagelabel" runat="server" Text=""></asp:Label></span></a></li>
+    <li  class="dropdown" id="profile-messages" ><a title="" href="#" data-toggle="dropdown" data-target="#profile-messages" class="dropdown-toggle"><i class="icon icon-user"></i>  <span class="text">Welcome 
+        <asp:Label ID="lbllgnnam" runat="server" Text=""></asp:Label></span><b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="#"><i class="icon-user"></i> My Profile</a></li>
+        <li class="divider"></li>
+        <li><a href="#"><i class="icon-check"></i> My Tasks</a></li>
+        <li class="divider"></li>
+          <li><a title="Change Password" data-id="ChangePwd.aspx" href="#ChangePwd" id="A1"  data-toggle="modal" class="openIDialog"><i class="icon-key"></i> Change Password</a></li>          
+        <li class="divider"></li>
+        <li><a title="Log Out" href="logout.aspx"><i class="icon-signout"></i>Logout</a></li>
+      </ul>
+    </li>
+    <li class="dropdown" style="display:none;" id="menu-messages"><a href="#" data-toggle="dropdown" data-target="#menu-messages" class="dropdown-toggle"><i class="icon icon-envelope"></i> <span class="text">Messages</span> <span class="label label-important">5</span> <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a class="sAdd" title="" href="#"><i class="icon-plus"></i> new message</a></li>
+        <li class="divider"></li>
+        <li><a class="sInbox" title="" href="#"><i class="icon-envelope"></i> inbox</a></li>
+        <li class="divider"></li>
+        <li><a class="sOutbox" title="" href="#"><i class="icon-arrow-up"></i> outbox</a></li>
+        <li class="divider"></li>
+        <li><a class="sTrash" title="" href="#"><i class="icon-trash"></i> trash</a></li>
+      </ul>
+    </li>
+    <li class=""><a title="View Session" href="#dispsession" id="ses-event"  data-toggle="modal"><i class="icon icon-cog"></i> <span class="text">Session Values(Technical Review)</span></a></li>
+
+    <li class=""><a title="Log Out" href="logout.aspx"><i class="icon icon-share-alt"></i> <span class="text">Logout</span></a></li>
+     <%--<li id="noti_Container" class="header_nav" style="padding-top: 8px;">
+                 <button type="button" class="button-default show-notifications  js-show-notifications" id="noti_Button" class="bell_ico">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="bell_ico" viewBox="0 0 30 32">
+                            <defs>
+                                <g id="icon-bell">
+	                                <path class="path1" d="M15.143 30.286q0-0.286-0.286-0.286-1.054 0-1.813-0.759t-0.759-1.813q0-0.286-0.286-0.286t-0.286 0.286q0 1.304 0.92 2.223t2.223 0.92q0.286 0 0.286-0.286zM3.268 25.143h23.179q-2.929-3.232-4.402-7.348t-1.473-8.652q0-4.571-5.714-4.571t-5.714 4.571q0 4.536-1.473 8.652t-4.402 7.348zM29.714 25.143q0 0.929-0.679 1.607t-1.607 0.679h-8q0 1.893-1.339 3.232t-3.232 1.339-3.232-1.339-1.339-3.232h-8q-0.929 0-1.607-0.679t-0.679-1.607q3.393-2.875 5.125-7.098t1.732-8.902q0-2.946 1.714-4.679t4.714-2.089q-0.143-0.321-0.143-0.661 0-0.714 0.5-1.214t1.214-0.5 1.214 0.5 0.5 1.214q0 0.339-0.143 0.661 3 0.357 4.714 2.089t1.714 4.679q0 4.679 1.732 8.902t5.125 7.098z" />
+                                </g>
+                            </defs>
+                            <g fill="#fff">
+	                            <use xlink:href="#icon-bell" transform="translate(0 0)"></use>
+                            </g>
+                            </svg>
+                            <div class="notifications-count js-count" id="noti_Counter"></div>
+                    </button>
+
+                <div id="notifications">
+                    <h3 class="not3">Notifications</h3>
+                    <div style="height:300px;">
+                    <div id="noti_data">
+                                    <ul class="tblNoti_Data notifications-list">
+                                        <li class="item js-item" style="list-style:none; display: flex;">
+                                             <i class="icon icon-circle ico_blue"></i>
+                                            <div class="details">
+                                                 <a href="#" id="actlink"> <span class="title"></span ></a> <br />
+                                                
+                                                <span class="date"></span>
+                                                 <a class="ack_noti acc_link" href="" >Acknowledge</a>
+                                            </div>
+              
+                                        </li>
+                                        </ul>
+                                           
+                    </div> 
+                    </div>
+                  
+                    <div class="seeAll" style="text-align: center;"> <a href="notification_details.aspx" onclick="location.replace('notification_Details.aspx'),'_top'" style="color: #333;
+text-decoration: underline;"> Show All Notification </a>
+                    
+                    </div>
+                </div>
+            </li>--%>
+    <li  class="" style="margin-left: 231px; display:none;" ><a title="BetaUpdate" href="#" style="font-size: 21px !important;vertical-align:middle !important;height: 21px;"><span style="font-family:Arial bold;font-size:21px !important;color:White;margin-top:2px;">?-Updates</span> (Under Technical Review)</a></li>
+  </ul>
+
+  <%--<div style="float:right;">
+   <ul class="navbar navbar-inverse" >
+        <p style="float: right;margin-right: -284%;margin-top: 7px;color: white;font-size: 14px !important;">Under Technical Review</p>
+  
+  </ul>
+</div>--%>
+</div>
+
+<!--close-top-Header-menu-->
+<!--start-top-serch-->
+<!--<div id="search">
+  <input type="text" placeholder="Search here..."/>
+  <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
+</div>-->
+<!--close-top-serch-->
+<!--sidebar-menu-->
+
+    <asp:Label ID="Lblmenu" runat="server" Text=""></asp:Label>
+
+    <!--<div style="position:absolute; bottom:0;  margin-bottom: 10px; margin-left: 15px;"><img src="img/acumen-logo-banner.png" alt="" border="0" /></div>-->
+
+ <%-- <asp:DataList ID="mainmenu" DataKeyField="menuid" runat="server">
+  <HeaderTemplate>
+  <ul>
+  </HeaderTemplate>
+        <ItemTemplate>
+         
+         <li><a href='<%#Eval("menulink") %>'><i class='<%#Eval("menuicncls") %>'></i> <span><%#Eval("menunam") %></span></a> 
+         
+          </li>
+          
+          </ItemTemplate>
+          <FooterTemplate>
+          </ul>
+          </FooterTemplate>
+        </asp:DataList>--%>
+ 
+  
+<%--<ul>
+    <li><a href="charts.html"><i class="icon icon-signal"></i> <span>Charts &amp; graphs</span></a> </li>
+    <li><a href="widgets.html"><i class="icon icon-inbox"></i> <span>Widgets</span></a> </li>
+    <li><a href="tables.html"><i class="icon icon-th"></i> <span>Tables</span></a></li>
+    <li><a href="grid.html"><i class="icon icon-fullscreen"></i> <span>Full width</span></a></li>
+    <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Forms</span> <span class="label label-important">3</span></a>
+      <ul>
+       
+        <li><a href="form-validation.html">Form with Validation</a></li>
+        <li><a href="form-wizard.html">Form with Wizard</a></li>
+      </ul>
+    </li>
+    <li><a href="buttons.html"><i class="icon icon-tint"></i> <span>Buttons &amp; icons</span></a></li>
+    <li><a href="interface.html"><i class="icon icon-pencil"></i> <span>Eelements</span></a></li>
+    <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>Addons</span> <span class="label label-important">5</span></a>
+      <ul>
+        <li><a href="index2.html">Dashboard2</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+        <li><a href="invoice.html">Invoice</a></li>
+        <li><a href="chat.html">Chat option</a></li>
+      </ul>
+    </li>
+    <li class="submenu"> <a href="#"><i class="icon icon-info-sign"></i> <span>Error</span> <span class="label label-important">4</span></a>
+      <ul>
+        <li><a href="error403.html">Error 403</a></li>
+        <li><a href="error404.html">Error 404</a></li>
+        <li><a href="error405.html">Error 405</a></li>
+        <li><a href="error500.html">Error 500</a></li>
+      </ul>
+    </li>
+    <li class="content"> <span>Monthly Bandwidth Transfer</span>
+      <div class="progress progress-mini progress-danger active progress-striped">
+        <div style="width: 77%;" class="bar"></div>
+      </div>
+      <span class="percent">77%</span>
+      <div class="stat">21419.94 / 14000 MB</div>
+    </li>
+    <li class="content"> <span>Disk Space Usage</span>
+      <div class="progress progress-mini active progress-striped">
+        <div style="width: 87%;" class="bar"></div>
+      </div>
+      <span class="percent">87%</span>
+      <div class="stat">604.44 / 4000 MB</div>
+    </li>
+  </ul>
+</div>--%>
+<!--sidebar-menu-->
+
+<!--main-container-part-->
+<div id="content">
+<!--breadcrumbs-->
+  <div id="content-header">
+    <div id="breadcrumb"> <a href="index.aspx" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a>
+       <a id ="abcummb" runat="server" class="tip-bottom"> <asp:Label ID="Lblbcumb" runat="server" Text=""></asp:Label></a>
+  <span id="noti_Container" class="header_nav" style="padding-top: 0px; margin-left: 30%;">
+                 <button type="button" class="button-default show-notifications  js-show-notifications" id="noti_Button" class="bell_ico">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="bell_ico" viewBox="0 0 30 32">
+                            <defs>
+                                <g id="icon-bell">
+	                                <path class="path1" d="M15.143 30.286q0-0.286-0.286-0.286-1.054 0-1.813-0.759t-0.759-1.813q0-0.286-0.286-0.286t-0.286 0.286q0 1.304 0.92 2.223t2.223 0.92q0.286 0 0.286-0.286zM3.268 25.143h23.179q-2.929-3.232-4.402-7.348t-1.473-8.652q0-4.571-5.714-4.571t-5.714 4.571q0 4.536-1.473 8.652t-4.402 7.348zM29.714 25.143q0 0.929-0.679 1.607t-1.607 0.679h-8q0 1.893-1.339 3.232t-3.232 1.339-3.232-1.339-1.339-3.232h-8q-0.929 0-1.607-0.679t-0.679-1.607q3.393-2.875 5.125-7.098t1.732-8.902q0-2.946 1.714-4.679t4.714-2.089q-0.143-0.321-0.143-0.661 0-0.714 0.5-1.214t1.214-0.5 1.214 0.5 0.5 1.214q0 0.339-0.143 0.661 3 0.357 4.714 2.089t1.714 4.679q0 4.679 1.732 8.902t5.125 7.098z" />
+                                </g>
+                            </defs>
+                            <g fill="#3b5a9a">
+	                            <use xlink:href="#icon-bell" transform="translate(0 0)"></use>
+                            </g>
+                            </svg>
+                            <div class="notifications-count js-count" id="noti_Counter"></div>
+                    </button>
+
+                <div id="notifications">
+                    <h3 class="not3">Notifications</h3>
+                    <div style="height:300px;">
+                    <div id="noti_data">
+                                    <ul class="tblNoti_Data notifications-list">
+                                        <li class="item js-item" style="list-style:none; display: flex;">
+                                             <i class="icon icon-circle ico_blue"></i>
+                                            <div class="details">
+                                                 <a href="#" id="actlink"> <span class="title"></span ></a> <br />
+                                                
+                                                <span class="date"></span>
+                                                 <a class="ack_noti acc_link" href="" >Acknowledge</a>
+                                            </div>
+              
+                                        </li>
+                                        </ul>
+                                           
+                    </div> 
+                    </div>
+                  
+                    <div class="seeAll" style="text-align: center;"> <a href="notification_details.aspx" onclick="location.replace('notification_Details.aspx'),'_top'" style="color: #333;
+text-decoration: underline;"> Show All Notification </a>
+                    
+                    </div>
+                </div>
+            </span>
+      
+    </div>
+    
+    <div style="float:right; margin-top: -24px !important; margin-right:12.5%;">
+         
+                         <a href="https://www.facebook.com/AcumenManagementServices" target="_blank"> <img src="Images/Facebook_icon_1.png" title="Facebook"  style="width:16px;height:16px;padding:0; vertical-align: sub;" /></a> 
+                          <a href="https://www.linkedin.com" target="_blank"> <img src="Images/linkdin_1.png" title="LinkedIn"  style="width:16px;height:16px; margin-right:-2.5px; vertical-align: sub;" /></a> 
+                           <a href="https://twitter.com/AcumenServiceCA" target="_blank"> <img src="Images/twitter_1.png" title="Twitter" style="width:16px;height:16px;padding:0; vertical-align: sub;" /></a> 
+      </div>
+     <%--<h1 style="display: none;"><asp:Label ID="masterpagelabel" runat="server" Text=""></asp:Label></h1>--%>
+  </div>
+<!--End-breadcrumbs-->
+
+<!--Action boxes-->
+         <form id="Form1" runat="server">
+        <ajax:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server">
+</ajax:ToolkitScriptManager>
+
+<asp:LinkButton ID="lnkFake" runat="server" />
+<ajax:ModalPopupExtender ID="mpeTimeout" BehaviorID ="mpeTimeout" runat="server" PopupControlID="pnlPopup" TargetControlID="lnkFake"
+    OkControlID="btnYes" CancelControlID="btnNo" BackgroundCssClass="modalBackground" OnOkScript = "ResetSession()">
+</ajax:ModalPopupExtender>
+<asp:Panel ID="pnlPopup" runat="server" CssClass="modalPopup" Style="display: none">
+    <div class="header">
+        Session Expiring!
+    </div>
+    <div class="body">
+        Your Session will expire in&nbsp;<span id="seconds"></span>&nbsp;seconds.<br />
+        Do you want to reset?
+    </div>
+    <div class="footer" align="right">
+        <asp:Button ID="btnYes" runat="server" Text="Yes" CssClass="yes" />
+        <asp:Button ID="btnNo" runat="server" Text="No" CssClass="no" />
+    </div>
+</asp:Panel>
+ <script type="text/javascript">
+     function ShowDet() {
+        // alert("rahul");
+         $(document).ready(function () {
+             $("#btnmstShowdet").click();
+         });
+     }
+    </script>
+    <script type="text/javascript">
+        function SessionExpireAlert(timeout) {
+            var seconds = timeout / 1000;
+            document.getElementsByName("secondsIdle").innerHTML = seconds;
+            document.getElementsByName("seconds").innerHTML = seconds;
+            setInterval(function () {
+                seconds--;
+                document.getElementById("seconds").innerHTML = seconds;
+                document.getElementById("secondsIdle").innerHTML = seconds;
+            }, 1000);
+            setTimeout(function () {
+                //Show Popup before 20 seconds of timeout.
+                $find("mpeTimeout").show();
+            }, timeout - 20 * 1000);
+            setTimeout(function () {
+                window.location = "logout.aspx";
+            }, timeout);
+        };
+        function ResetSession() {
+            //Redirect to refresh Session.
+            window.location = window.location.href;
+        }
+    </script>
+    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+
+    </asp:ContentPlaceHolder>
+
+      <div class="modal hide" style="height:200px; top:30%;width:200px;position:fixed;left:50%" id="accessdenied">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">×</button>
+            <h3>Notice</h3>
+         </div>
+                <div class="modal-body">
+           <p style="margin: 10px 10px 10px">  Access Denied </p>
+               
+                </div>
+              
+              </div>
+        <div class="modal hide" style="height:300px; top:30%;width:300px;position:fixed;left:50%" id="dispsession">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">×</button>
+            <h3>Session Variables</h3>
+         </div>
+                <div class="modal-body">
+           <p style="margin: 10px 10px 10px">  
+               <asp:Label ID="lblsess" runat="server" Text="Label"></asp:Label> </p>
+               
+                </div>
+              
+              </div>
+              
+              <div class="modal hide" id="ComplaintAdd">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">×</button>
+                  <h3 style="font-size:14px;font-style:normal;font-weight:600;font-family:Arial;">Complaint Cell</h3>
+                </div>
+                <div class="modal-body">
+                <iframe runat="server" id="addnewfrm" scrolling="yes"  frameborder="0" width="100%" height="553px" src=""></iframe>
+                </div>
+              </div>
+
+              <div class="modal hide" id="ChangePwd">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">×</button>
+                  <h3 style="font-size:14px;font-style:normal;font-weight:600;font-family:Arial;" 
+id="mdltitle">Change Password</h3>
+                </div>
+                <div class="modal-body">
+                <iframe runat="server" id="ifrChngPwd" scrolling="no"  frameborder="0" width="100%" height="472px" src=""></iframe>
+                </div>
+              </div>
+
+
+              <button type="button" style="display: none;" id="btnShowPopup" class="btn btn-primary btn-lg"
+                data-toggle="modal" data-target="#ComplaintAdd">
+                Launch demo modal
+             </button> 
+			   <asp:HiddenField ID="HFSession" runat="server" />
+               <asp:HiddenField ID="HFIP" runat="server" />
+     </form>
+
+</div>
+
+<!--end-main-container-part-->
+
+<!--Footer-part-->
+
+
+
+<script src="js/jquery.min.js" type="text/javascript" ></script> 
+<script src="js/jquery.ui.custom.js" type="text/javascript" ></script> 
+<script src="js/bootstrap.min.js"  ></script> 
+
+<script src="js/matrix.js" ></script> 
+<script src="js/matrix.dashboard.js" ></script> 
+
+<script src="js/jquery.validate.js" ></script> 
+
+
+<script src="js/matrix.popover.js" ></script> 
+<script src="js/jquery.dataTables.min.js" ></script> 
+<script src="js/matrix.tables.js" ></script> 
+<script src="js/matrix.form_common.js" ></script> 
+
+
+<script type="text/javascript">
+    $(function () {
+        var today = new Date();
+        var items = generateItems(today);
+        refreshNotifications(items, today);
+    });
+
+    function refreshNotifications(items, today) {
+        items = items || [];
+        today = today || newDate();
+
+        var cssTransitionEnd = getTransitionEnd();
+        var container = $('span');
+
+        items.forEach(function (item) {
+            item.isExpired = item.date < today;
+
+            item.isToday = (item.date.getFullYear() === today.getFullYear()) &&
+      (item.date.getMonth() === today.getMonth()) &&
+      (item.date.getDate() === today.getDate());
+
+            item.formattedDate = function () {
+                if (this.isToday) {
+                    return timeToString(this.date);
+                } else {
+                    return this.date.getFullYear() + '-' +
+          strpad(this.date.getMonth() + 1) + '-' +
+          strpad(this.date.getDate());
+                }
+            };
+        });
+
+        items.sort(function (a, b) {
+            if (a.isExpired === b.isExpired) {
+                return a.date - b.date;
+            } else {
+                return (b.isExpired ? 0 : 1) - (a.isExpired ? 0 : 1);
+            }
+        });
+
+        var template =
+      '<div class="notifications js-notifications">' +
+        '<h3>Notifications</h3>' +
+        '<ul class="notifications-list">' +
+          '<li class="item no-data">You don\'t have notifications</li>' +
+          '{{#items}}' +
+            '<li class="item js-item {{#isExpired}}expired{{/isExpired}}" data-id="{{id}}">' +
+        //            '<i class="fa fa-info-circle" style="color: #0081cc;"></i>' +
+              '<div class="details">' +
+                '<span class="title">{{title}}</span>' +
+                '<span class="date">{{formattedDate}}</span>' +
+              '</div>' +
+              '<button type="button" class="button-default button-dismiss js-dismiss">×</button>' +
+            '</li>' +
+          '{{/items}}' +
+        '</ul>' +
+        '<a href="#" class="show-all">Show all notifications</a>' +
+      '</div>';
+
+
+        container
+    .append(Mustache.render(template, { items: items }))
+    .find('.js-count').attr('data-count', items.length).html(items.length).end()
+    .on('click', '.js-show-notifications', function (event) {
+        $(event.currentTarget).closest('.js-show-notifications').toggleClass('active').blur();
+        return true;
+    })
+    .on('click', '.js-dismiss', function (event) {
+        var item = $(event.currentTarget).parents('.js-item');
+
+        var removeItem = function () {
+            item[0].removeEventListener(cssTransitionEnd, removeItem, false);
+            item.remove();
+
+            /* update notifications' counter */
+            var countElement = container.find('.js-count');
+            var prevCount = +countElement.attr('data-count');
+            var newCount = prevCount - 1;
+            countElement
+          .attr('data-count', newCount)
+          .html(newCount);
+
+            if (newCount === 0) {
+                countElement.remove();
+                container.find('.js-notifications').addClass('empty');
+            }
+        };
+
+        item[0].addEventListener(cssTransitionEnd, removeItem, false);
+        item.addClass('dismissed');
+        return true;
+    });
+    }
+
+    function generateItems(today) {
+        today = today || newDate();
+        return [
+    { id: 1, title: 'April 25th Express Entry Draw Invited.', date: randomDate() },
+    { id: 2, title: 'The Manitoba Provincial Nominee Program.', date: randomDate(addMinutes(today, -60), addMinutes(today, 60)) },
+    { id: 3, title: 'This magnanimous multi-year immigration plan.', date: randomDate() },
+    { id: 4, title: 'Express Entry draw on March 14th.', date: randomDate() },
+    { id: 5, title: 'Canada to apply for permanent residence.', date: randomDate(addMinutes(today, -360), addMinutes(today, 360)) },
+    { id: 6, title: 'Stream of Ontario invited 488 candidates.', date: randomDate() }
+  ];
+    }
+
+    function randomDate(start, end) {
+        start = start || (new Date(2014, 0, 1));
+        end = end || (new Date(2015, 0, 1));
+        return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    }
+
+    function addMinutes(date, minutes) {
+        return new Date(date.getTime() + minutes * 60000);
+    }
+
+    function timeToString(date) {
+        if (date) {
+            var hh = date.getHours();
+            var mm = date.getMinutes();
+            var ap = hh >= 12 ? 'PM' : 'AM';
+
+            hh = (hh >= 12) ? (hh - 12) : hh;
+            hh = (hh === 0) ? 12 : hh;
+
+            return (hh < 10 ? '0' : '') + hh.toString() + ':' +
+      (mm < 10 ? '0' : '') + mm.toString() + ' ' + ap;
+        }
+        return null;
+    }
+
+    function strpad(num) {
+        if (parseInt(num) < 10) {
+            return '0' + parseInt(num);
+        } else {
+            return parseInt(num);
+        }
+    }
+
+    function getTransitionEnd() {
+        var supportedStyles = window.document.createElement('fake').style;
+        var properties = {
+            'webkitTransition': { 'end': 'webkitTransitionEnd' },
+            'oTransition': { 'end': 'oTransitionEnd' },
+            'msTransition': { 'end': 'msTransitionEnd' },
+            'transition': { 'end': 'transitionend' }
+        };
+
+        var match = null;
+        Object.getOwnPropertyNames(properties).forEach(function (name) {
+            if (!match && name in supportedStyles) {
+                match = name;
+                return;
+            }
+        });
+
+        return (properties[match] || {}).end;
+    }
+        </script>
+
+<script type="text/javascript">
+    // This function is called from the pop-up menus to transfer to
+    // a different page. Ignore if the value returned is a null string:
+    function goPage(newURL) {
+
+        // if url is empty, skip the menu dividers and reset the menu selection to default
+        if (newURL != "") {
+
+            // if url is "-", it is this page -- reset the menu:
+            if (newURL == "-") {
+                resetMenu();
+            }
+            // else, send page to designated URL            
+            else {
+                document.location.href = newURL;
+            }
+        }
+    }
+
+    // resets the menu selection upon entry to this page:
+    function resetMenu() {
+        document.gomenu.selector.selectedIndex = 2;
+    }
+</script>
+ <script type="text/javascript">
+
+     $(document).on("click", ".openIDialog", function () {
+         var myImageId = $(this).data('id');
+         //alert(myImageId);
+         if (myImageId == "ChangePwd.aspx")
+             $("#mdltitle").html("Change Password");
+         else
+             $("#mdltitle").html("Complaint Cell");
+
+         $(".modal-body #ifrChngPwd").attr("src", myImageId);
+     });
+
+   
+     function isNumberKey(evt) {
+         var charCode = (evt.which) ? evt.which : evt.keyCode;
+         if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+             return false;
+         }
+         return true;
+     }
+     function ValidateEmail(evt) {
+         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+         if (evt.value.match(mailformat)) {
+             document.getElementById("emlerror").style.display = ret ? "none" : "inline";
+             return mailformat;
+         }
+        
+     }  
+     function limitCharLengthAddress(txtArea) {
+         if (txtArea.value.length > 11) {
+             txtArea.value = txtArea.value.substring(0, 11);
+         }
+     }
+     function limitLengthAddress(txtArea) {
+         if (txtArea.value.length > 11) {
+             txtArea.value = txtArea.value.substring(0, 11);
+         }
+     }
+     function IsValidEmail(e) {
+         var keyCode = e.keyCode == 0 ? e.charCode : e.keyCode;
+         var ret = ((keyCode >= 48 && keyCode <= 57) || (keyCode == 32) || (keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
+         
+         return ret;
+     }
+
+
+         </script>
+     <script type="text/javascript">
+         var specialKeys = new Array();
+         specialKeys.push(8); //Backspace
+         specialKeys.push(32); //Space
+         specialKeys.push(9); //Tab
+         specialKeys.push(46); //Delete
+         specialKeys.push(36); //Home
+         specialKeys.push(35); //End
+         specialKeys.push(37); //Left
+         specialKeys.push(39); //Right
+         function IsAlphaNumeric(e) {
+             var keyCode = e.keyCode == 0 ? e.charCode : e.keyCode;
+             var ret = ((keyCode >= 48 && keyCode <= 57) || (keyCode == 32) || (keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
+             document.getElementById("error").style.display = ret ? "none" : "inline";
+             return ret;
+         }
+    </script>
+</body>
+</html>
